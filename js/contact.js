@@ -1,7 +1,8 @@
 import { getSupabaseClient, isSupabaseConfigured } from './supabaseClient.js';
 
 /**
- * Contact Form Controller with Supabase Persistence and XSS Protection
+ * Contact Form Controller
+ * Validates user input, inserts records into Supabase, and clears form fields on success.
  */
 document.addEventListener('DOMContentLoaded', () => {
   const contactForm = document.getElementById('contactForm');
@@ -18,9 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
   contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const name = document.getElementById('inputName').value.trim();
-    const email = document.getElementById('inputEmail').value.trim();
-    const enquiry = document.getElementById('inputEnquiry').value.trim();
+    const nameInput = document.getElementById('inputName');
+    const emailInput = document.getElementById('inputEmail');
+    const enquiryInput = document.getElementById('inputEnquiry');
+
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const enquiry = enquiryInput.value.trim();
 
     if (!name || !email || !enquiry) {
       showStatus('error', 'Please fill in all required fields.');
@@ -31,22 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.textContent = 'Submitting...';
 
     if (!isSupabaseConfigured()) {
-      setTimeout(() => {
-        showStatus(
-          'success',
-          'Thank you. Your enquiry has been received (Local Demo Mode: Please configure Supabase keys in js/supabaseClient.js).'
-        );
-        contactForm.reset();
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Inquiry';
-      }, 600);
+      showStatus('error', 'System configuration error. Please contact us via email.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Inquiry';
       return;
     }
 
     try {
       const supabase = getSupabaseClient();
       if (!supabase) {
-        throw new Error('Supabase client initialization failed.');
+        throw new Error('Supabase client failed to initialize.');
       }
 
       const { error } = await supabase
@@ -57,11 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
         throw error;
       }
 
-      showStatus('success', 'Thank you! Your inquiry has been successfully sent.');
+      showStatus('success', 'Thank you! Your inquiry has been sent successfully. We will be in touch shortly.');
       contactForm.reset();
     } catch (err) {
       console.error('Contact Form Submission Error:', err);
-      showStatus('error', 'Unable to submit your request at this time. Please try again or contact us directly via telephone.');
+      showStatus('error', 'Unable to submit your inquiry at this moment. Please email info@partnersunlimited.net directly.');
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Submit Inquiry';
