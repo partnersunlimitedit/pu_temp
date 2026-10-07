@@ -259,6 +259,15 @@ body {
   margin-top: 0.25rem;
 }
 
+.info-item a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.info-item a:hover {
+  text-decoration: underline;
+}
+
 .form-group {
   margin-bottom: 1.25rem;
 }
