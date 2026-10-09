@@ -1,8 +1,7 @@
 import { getSupabaseClient, isSupabaseConfigured } from './supabaseClient.js';
 
 /**
- * Contact Form Controller
- * Validates user input, inserts records into Supabase, and clears form fields on success.
+ * Contact Form Controller with Safe DOM Output & Supabase Ingestion
  */
 document.addEventListener('DOMContentLoaded', () => {
   const contactForm = document.getElementById('contactForm');
@@ -36,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.textContent = 'Submitting...';
 
     if (!isSupabaseConfigured()) {
-      showStatus('error', 'System configuration error. Please contact us via email.');
+      showStatus('error', 'Supabase configuration is unavailable. Please email info@partnersunlimited.net directly.');
       submitBtn.disabled = false;
       submitBtn.textContent = 'Submit Inquiry';
       return;
@@ -56,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         throw error;
       }
 
-      showStatus('success', 'Thank you! Your inquiry has been sent successfully. We will be in touch shortly.');
+      showStatus('success', 'Thank you! Your inquiry has been sent to our corporate team. We will be in touch shortly.');
       contactForm.reset();
     } catch (err) {
       console.error('Contact Form Submission Error:', err);
